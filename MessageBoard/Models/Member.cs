@@ -17,12 +17,12 @@ namespace MessageBoard.Models
 
         public int MemberId { get; set; }
         [Required]
-        [Range(3, 25, ErrorMessage = "Username must be between 3 and 25 characters.")]
+        [StringLength(25, ErrorMessage = "Username must be between 3 and 25 characters.")]
         public string MemberName { get; set; }
-        [Range(0, 1, ErrorMessage = "Character must be only 1 character")]
+        [StringLength(1, ErrorMessage = "Character can be only 1 character")]
         public char MemberCharacter { get; set; } = '@';
         public string MemberColor { get; set; } = "#fff";
-        public DateTime MemberCreated { get; }
+        public DateTime MemberCreated { get; set; }
 
         public virtual ICollection<GroupMember> JoinGroups { get; }
         public virtual ICollection<MemberMessage> JoinMessages { get; }

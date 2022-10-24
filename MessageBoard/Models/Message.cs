@@ -10,22 +10,23 @@ namespace MessageBoard.Models
   {
     public Message()
     {
-      this.JoinGroups = new HashSet<GroupMessage>();
-      this.JoinMembers = new HashSet<MemberMessage>();
-      this.MessageCreated = DateTime.Now;
+      this.MessageCreated = DateTime.UtcNow;
     }
 
     public int MessageId { get; set; }
-    public int ParentId { get; set; }
-    [Range(3, 100, ErrorMessage = "Message Title has a limit of 100 characters")]
+    public int ParentId { get; set; } = 0;
+    [StringLength(100, ErrorMessage = "Message Title has a limit of 100 characters")]
     public string MessageTitle { get; set; }
     [Required]
-    [Range(3, 999, ErrorMessage = "Message Text has a limit of 999 characters")]
+    [StringLength(999,  ErrorMessage = "Message Text has a limit of 999 characters")]
     public string MessageText { get; set; }
-    public DateTime MessageCreated { get; }
+    public DateTime MessageCreated { get; set; }
+    public int GroupId { get; set; }
+    public int MemberId { get; set; }
 
-    public virtual ICollection<GroupMessage> JoinGroups { get; set; }
-    public virtual ICollection<MemberMessage> JoinMembers { get; set; }
+    public virtual Group group { get; set; }
+    public virtual Member member { get; set; }
+    public virtual Message parent { get; set; }
 
   }
 }
