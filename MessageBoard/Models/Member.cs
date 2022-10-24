@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace MessageBoard.Models
 {
@@ -15,9 +16,12 @@ namespace MessageBoard.Models
         }
 
         public int MemberId { get; set; }
+        [Required]
+        [Range(3, 25, ErrorMessage = "Username must be between 3 and 25 characters.")]
         public string MemberName { get; set; }
-        public char MemberCharacter { get; set; }
-        public string MemberColor { get; set; }
+        [Range(0, 1, ErrorMessage = "Character must be only 1 character")]
+        public char MemberCharacter { get; set; } = '@';
+        public string MemberColor { get; set; } = "#fff";
         public DateTime MemberCreated { get; }
 
         public virtual ICollection<GroupMember> JoinGroups { get; }

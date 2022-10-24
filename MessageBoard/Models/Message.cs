@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace MessageBoard.Models
 {
@@ -15,7 +16,11 @@ namespace MessageBoard.Models
     }
 
     public int MessageId { get; set; }
+    public int ParentId { get; set; }
+    [Range(3, 100, ErrorMessage = "Message Title has a limit of 100 characters")]
     public string MessageTitle { get; set; }
+    [Required]
+    [Range(3, 999, ErrorMessage = "Message Text has a limit of 999 characters")]
     public string MessageText { get; set; }
     public DateTime MessageCreated { get; }
 
