@@ -68,6 +68,17 @@ namespace MessageBoard.Controllers
     [HttpPost]
     public async Task<ActionResult<Message>> Post(Message message)
     {
+      Group group = _db.Groups.FirstOrDefault(g => g.GroupId == message.GroupId);
+      message.Group = group;
+      Member member = _db.Members.FirstOrDefault(m => m.MemberId == message.MemberId);
+      message.Member = member;
+      if(message.ParentId != 0)
+      {
+        Message parent = _db.Messages.FirstOrDefault(p => p.MessageId == message.ParentId);
+        message.Parent = parent;
+        parent.Children.Add(message);
+        _db.Entry(parent).State = EntityState.Modified;
+      }
       _db.Messages.Add(message);
       await _db.SaveChangesAsync();
 

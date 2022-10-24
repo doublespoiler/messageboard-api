@@ -14,7 +14,7 @@ namespace MessageBoard.Models
     }
 
     public int MessageId { get; set; }
-    public int ParentId { get; set; } = 0;
+    public int ParentId { get; set; }
     [StringLength(100, ErrorMessage = "Message Title has a limit of 100 characters")]
     public string MessageTitle { get; set; }
     [Required]
@@ -24,9 +24,10 @@ namespace MessageBoard.Models
     public int GroupId { get; set; }
     public int MemberId { get; set; }
 
-    public virtual Group group { get; set; }
-    public virtual Member member { get; set; }
-    public virtual Message parent { get; set; }
+    public virtual Group Group { get; set; }
+    public virtual Member Member { get; set; }
+    public virtual Message Parent { get; set; }
+    public virtual ICollection<Message> Children { get; set; }
 
   }
 }
