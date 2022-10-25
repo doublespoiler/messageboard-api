@@ -41,7 +41,7 @@ namespace MessageBoard.Controllers
 
     //Get api/messages
     [HttpGet]
-    public async Task<List<Message>> Get(string title, string text, DateTime date)
+    public async Task<List<Message>> Get(string title, string text, int? groupId, int? memberId, DateTime? startDate, DateTime? endDate)
     {
         IQueryable<Message> query = _db.Messages.AsQueryable();
 
@@ -56,11 +56,21 @@ namespace MessageBoard.Controllers
         {
             query= query.Where(entry => entry.MessageText == text);
         }
+
+        if (groupId != null)
+        {
+            query = query.Where(entry => entry.GroupId == groupId);
+        }
+
+        if (memberId != null)
+        {
+            query = query.Where(entry => entry.MemberId == memberId);
+        }
         
-        // if (date != null)
-        // {
-        //     query= query.Where(entry => entry.MessageCreated.Date.ToString() == date.Date.ToString());
-        // }
+        if (startDate != null)
+        {
+            query = query.Where(entry => entry.MessageCreated >= startDate && entry.MessageCreated <= endDate);
+        }
       return await query.ToListAsync();
     }
 
@@ -70,15 +80,7 @@ namespace MessageBoard.Controllers
     {
       Group group = _db.Groups.FirstOrDefault(g => g.GroupId == message.GroupId);
       message.Group = group;
-      Member member = _db.Members.FirstOrDefault(m => m.MemberId == message.MemberId);
-      message.Member = member;
-      if(message.ParentId != 0)
-      {
-        Message parent = _db.Messages.FirstOrDefault(p => p.MessageId == message.ParentId);
-        message.Parent = parent;
-        parent.Children.Add(message);
-        _db.Entry(parent).State = EntityState.Modified;
-      }
+
       _db.Messages.Add(message);
       await _db.SaveChangesAsync();
 

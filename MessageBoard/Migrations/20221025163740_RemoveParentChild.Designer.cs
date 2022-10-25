@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MessageBoard.Migrations
 {
     [DbContext(typeof(MessageBoardContext))]
-    [Migration("20221024221010_OneToManyMessage")]
-    partial class OneToManyMessage
+    [Migration("20221025163740_RemoveParentChild")]
+    partial class RemoveParentChild
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -43,6 +43,32 @@ namespace MessageBoard.Migrations
                     b.HasKey("GroupId");
 
                     b.ToTable("Groups");
+
+                    b.HasData(
+                        new
+                        {
+                            GroupId = 1,
+                            GroupColor = "#fff",
+                            GroupCreated = new DateTime(2022, 10, 25, 9, 37, 39, 551, DateTimeKind.Local).AddTicks(6787),
+                            GroupTitle = "Main",
+                            GroupTopic = "This is the main group"
+                        },
+                        new
+                        {
+                            GroupId = 2,
+                            GroupColor = "#ff0000",
+                            GroupCreated = new DateTime(2022, 10, 25, 9, 37, 39, 551, DateTimeKind.Local).AddTicks(7624),
+                            GroupTitle = "Nintendo",
+                            GroupTopic = "Nintendo Switch"
+                        },
+                        new
+                        {
+                            GroupId = 3,
+                            GroupColor = "#00ff00",
+                            GroupCreated = new DateTime(2022, 10, 25, 9, 37, 39, 551, DateTimeKind.Local).AddTicks(7629),
+                            GroupTitle = "Programming",
+                            GroupTopic = "For Programmers"
+                        });
                 });
 
             modelBuilder.Entity("MessageBoard.Models.GroupMember", b =>
@@ -64,6 +90,32 @@ namespace MessageBoard.Migrations
                     b.HasIndex("MemberId");
 
                     b.ToTable("GroupMember");
+
+                    b.HasData(
+                        new
+                        {
+                            GroupMemberId = 1,
+                            GroupId = 1,
+                            MemberId = 1
+                        },
+                        new
+                        {
+                            GroupMemberId = 2,
+                            GroupId = 1,
+                            MemberId = 2
+                        },
+                        new
+                        {
+                            GroupMemberId = 3,
+                            GroupId = 2,
+                            MemberId = 2
+                        },
+                        new
+                        {
+                            GroupMemberId = 4,
+                            GroupId = 3,
+                            MemberId = 1
+                        });
                 });
 
             modelBuilder.Entity("MessageBoard.Models.GroupMessage", b =>
@@ -112,6 +164,24 @@ namespace MessageBoard.Migrations
                     b.HasKey("MemberId");
 
                     b.ToTable("Members");
+
+                    b.HasData(
+                        new
+                        {
+                            MemberId = 1,
+                            MemberCharacter = "S",
+                            MemberColor = "#ff8000",
+                            MemberCreated = new DateTime(2022, 10, 25, 9, 37, 39, 551, DateTimeKind.Local).AddTicks(8598),
+                            MemberName = "Skylan"
+                        },
+                        new
+                        {
+                            MemberId = 2,
+                            MemberCharacter = "W",
+                            MemberColor = "#0000ff",
+                            MemberCreated = new DateTime(2022, 10, 25, 9, 37, 39, 551, DateTimeKind.Local).AddTicks(9600),
+                            MemberName = "Will"
+                        });
                 });
 
             modelBuilder.Entity("MessageBoard.Models.MemberMessage", b =>
@@ -159,9 +229,6 @@ namespace MessageBoard.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("varchar(100) CHARACTER SET utf8mb4");
 
-                    b.Property<int>("ParentId")
-                        .HasColumnType("int");
-
                     b.HasKey("MessageId");
 
                     b.HasIndex("GroupId");
@@ -169,12 +236,41 @@ namespace MessageBoard.Migrations
                     b.HasIndex("MemberId");
 
                     b.ToTable("Messages");
+
+                    b.HasData(
+                        new
+                        {
+                            MessageId = 1,
+                            GroupId = 1,
+                            MemberId = 1,
+                            MessageCreated = new DateTime(2022, 10, 25, 16, 37, 39, 550, DateTimeKind.Utc).AddTicks(6304),
+                            MessageText = "Hello World",
+                            MessageTitle = "Hello World"
+                        },
+                        new
+                        {
+                            MessageId = 2,
+                            GroupId = 1,
+                            MemberId = 2,
+                            MessageCreated = new DateTime(2022, 10, 25, 16, 37, 39, 550, DateTimeKind.Utc).AddTicks(7454),
+                            MessageText = "Goodbye World",
+                            MessageTitle = "Goodbye World"
+                        },
+                        new
+                        {
+                            MessageId = 3,
+                            GroupId = 2,
+                            MemberId = 2,
+                            MessageCreated = new DateTime(2022, 10, 25, 16, 37, 39, 550, DateTimeKind.Utc).AddTicks(7458),
+                            MessageText = "Nintendo",
+                            MessageTitle = "Nintendo Switch"
+                        });
                 });
 
             modelBuilder.Entity("MessageBoard.Models.GroupMember", b =>
                 {
                     b.HasOne("MessageBoard.Models.Group", "Group")
-                        .WithMany("JoinGroups")
+                        .WithMany("JoinMembers")
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -193,7 +289,7 @@ namespace MessageBoard.Migrations
             modelBuilder.Entity("MessageBoard.Models.GroupMessage", b =>
                 {
                     b.HasOne("MessageBoard.Models.Group", "Group")
-                        .WithMany("JoinMessages")
+                        .WithMany()
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -212,7 +308,7 @@ namespace MessageBoard.Migrations
             modelBuilder.Entity("MessageBoard.Models.MemberMessage", b =>
                 {
                     b.HasOne("MessageBoard.Models.Member", "Member")
-                        .WithMany("JoinMessages")
+                        .WithMany()
                         .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -230,35 +326,35 @@ namespace MessageBoard.Migrations
 
             modelBuilder.Entity("MessageBoard.Models.Message", b =>
                 {
-                    b.HasOne("MessageBoard.Models.Group", "group")
-                        .WithMany()
+                    b.HasOne("MessageBoard.Models.Group", "Group")
+                        .WithMany("Messages")
                         .HasForeignKey("GroupId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("MessageBoard.Models.Member", "member")
-                        .WithMany()
+                    b.HasOne("MessageBoard.Models.Member", "Member")
+                        .WithMany("Messages")
                         .HasForeignKey("MemberId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("group");
+                    b.Navigation("Group");
 
-                    b.Navigation("member");
+                    b.Navigation("Member");
                 });
 
             modelBuilder.Entity("MessageBoard.Models.Group", b =>
                 {
-                    b.Navigation("JoinGroups");
+                    b.Navigation("JoinMembers");
 
-                    b.Navigation("JoinMessages");
+                    b.Navigation("Messages");
                 });
 
             modelBuilder.Entity("MessageBoard.Models.Member", b =>
                 {
                     b.Navigation("JoinGroups");
 
-                    b.Navigation("JoinMessages");
+                    b.Navigation("Messages");
                 });
 #pragma warning restore 612, 618
         }

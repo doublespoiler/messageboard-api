@@ -11,11 +11,11 @@ namespace MessageBoard.Controllers
 {
   [Route("api/[controller]")]
   [ApiController]
-  public class MemberController : ControllerBase
+  public class MembersController : ControllerBase
   {
     private readonly MessageBoardContext _db;
 
-    public MemberController(MessageBoardContext db)
+    public MembersController(MessageBoardContext db)
     {
         _db=db;
     }

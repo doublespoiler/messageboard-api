@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace MessageBoard.Models
 {
@@ -10,9 +11,9 @@ namespace MessageBoard.Models
     {
         public Member()
         {
-          this.JoinMessages = new HashSet<MemberMessage>();
+          this.Messages = new HashSet<Message>();
           this.JoinGroups = new HashSet<GroupMember>();
-          this.MemberCreated = DateTime.Now;
+          this.MemberCreated = DateTime.UtcNow;
         }
 
         public int MemberId { get; set; }
@@ -24,7 +25,9 @@ namespace MessageBoard.Models
         public string MemberColor { get; set; } = "#fff";
         public DateTime MemberCreated { get; set; }
 
+        [JsonIgnore]
         public virtual ICollection<GroupMember> JoinGroups { get; }
-        public virtual ICollection<MemberMessage> JoinMessages { get; }
+        [JsonIgnore]
+        public virtual ICollection<Message> Messages { get; }
     }
 }

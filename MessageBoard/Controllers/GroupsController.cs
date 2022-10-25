@@ -39,6 +39,48 @@ namespace MessageBoard.Controllers
       return group;
     }
 
+    //Get: api/groups/1/messages
+    [HttpGet("{id}/messages")]
+    public async Task<List<Message>> GetGroupMessages(int id, DateTime? startDate, DateTime? endDate)
+    {
+      var group = await _db.Groups.FindAsync(id);
+      IQueryable<Message> query = group.Messages.AsQueryable();
+
+      if(startDate != null && endDate != null)
+      {
+        query = query.Where(e => e.MessageCreated >= startDate && e.MessageCreated <= endDate);
+      }
+
+      if (startDate != null )
+      {
+        query = query.Where(entry => entry.MessageCreated >= startDate );
+      }
+
+      if(endDate != null)
+      {
+        query = query.Where(e => e.MessageCreated <= endDate);
+      }
+
+      return query.ToList();
+    }
+
+    // [HttpGet("{id}/members")]
+    // public async Task<ActionResult<List<Member>>> GetGroupMembers(int id)
+    // {
+    //   var group = await _db.Groups.FindAsync(id);
+    //   IQueryable<GroupMember> query = group.JoinMembers.AsQueryable();
+    //   List<Member> result = new List<Member>();
+    //   foreach(GroupMember e in query)
+      
+
+    //   if (group.JoinMembers == null)
+    //   {
+    //     return NotFound();
+    //   }
+
+    //   return query.ToList();
+    // }
+
     //Get api/groups
     [HttpGet]
     public async Task<List<Group>> Get(string title, string topic)

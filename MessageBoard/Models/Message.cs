@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace MessageBoard.Models
 {
@@ -14,7 +15,6 @@ namespace MessageBoard.Models
     }
 
     public int MessageId { get; set; }
-    public int ParentId { get; set; }
     [StringLength(100, ErrorMessage = "Message Title has a limit of 100 characters")]
     public string MessageTitle { get; set; }
     [Required]
@@ -24,10 +24,9 @@ namespace MessageBoard.Models
     public int GroupId { get; set; }
     public int MemberId { get; set; }
 
+    [JsonIgnore]
     public virtual Group Group { get; set; }
+    [JsonIgnore]
     public virtual Member Member { get; set; }
-    public virtual Message Parent { get; set; }
-    public virtual ICollection<Message> Children { get; set; }
-
   }
 }
