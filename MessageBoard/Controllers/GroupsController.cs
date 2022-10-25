@@ -17,7 +17,7 @@ namespace MessageBoard.Controllers
 
     public GroupsController(MessageBoardContext db)
     {
-        _db=db;
+        _db = db;
     }
 
     private bool GroupExists(int id)
@@ -64,22 +64,41 @@ namespace MessageBoard.Controllers
       return query.ToList();
     }
 
-    // [HttpGet("{id}/members")]
-    // public async Task<ActionResult<List<Member>>> GetGroupMembers(int id)
-    // {
-    //   var group = await _db.Groups.FindAsync(id);
-    //   IQueryable<GroupMember> query = group.JoinMembers.AsQueryable();
-    //   List<Member> result = new List<Member>();
-    //   foreach(GroupMember e in query)
-      
+    [HttpGet("{id}/members")]
+    public async Task<List<Member>> GetGroupMembers(int id, DateTime? createdAfter, DateTime? createdBefore)
+    {
+      var group = await _db.Groups.FindAsync(id);
+      IQueryable<GroupMember> query = group.JoinMembers.AsQueryable();
+      IQueryable<Member> members = _db.Members.AsQueryable();
 
-    //   if (group.JoinMembers == null)
-    //   {
-    //     return NotFound();
-    //   }
+      if(createdAfter != null && createdBefore != null)
+      {
+        members = members.Where(m => m.MemberCreated >= createdAfter && m.MemberCreated <= createdBefore);
+      }
 
-    //   return query.ToList();
-    // }
+      if(createdAfter != null)
+      {
+        members = members.Where(m => m.MemberCreated >= createdAfter);
+      }
+
+      if(createdBefore != null)
+      {
+        members = members.Where(m => m.MemberCreated <= createdBefore);
+      }
+
+      List<Member> result = new List<Member>();
+      foreach(GroupMember join in query)
+      {
+        foreach(Member member in members)
+        {
+          if(member.MemberId == join.MemberId)
+          {
+            result.Add(member);
+          }
+        }
+      }
+      return result;
+    }
 
     //Get api/groups
     [HttpGet]

@@ -82,14 +82,14 @@ namespace MessageBoard.Models
         {
           MemberId = 1,
           MemberName = "Skylan",
-          MemberCharacter = 'S',
+          MemberCharacter = "S",
           MemberColor = "#ff8000"
         },
         new Member
         {
           MemberId = 2,
           MemberName = "Will",
-          MemberCharacter = 'W',
+          MemberCharacter = "W",
           MemberColor = "#0000ff"
         }
       );
